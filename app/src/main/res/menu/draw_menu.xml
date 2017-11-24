@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_one"
+        android:title="三角形"/>
+    <item
+        android:id="@+id/menu_two"
+        android:title="正三角形"/>
+    <item
+        android:id="@+id/menu_three"
+        android:title="彩色三角形"/>
+    <item
+        android:id="@+id/menu_four"
+        android:title="正方形"/>
+    <item
+        android:id="@+id/menu_five"
+        android:title="圆形"/>
+    <item
+        android:id="@+id/menu_six"
+        android:title="正方体"/>
+    <item
+        android:id="@+id/menu_seven"
+        android:title="圆锥"/>
+    <item
+        android:id="@+id/menu_eight"
+        android:title="圆柱"/>
+    <item
+        android:id="@+id/menu_nine"
+        android:title="球体"/>
+    <item
+        android:id="@+id/menu_ten"
+        android:title="带光源的球体"/>
+</menu>
