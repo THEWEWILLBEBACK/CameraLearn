@@ -26,7 +26,6 @@ public class FGLRender extends Shape {
 
     public void setShape(Class<? extends Shape> cls) {
         this.cls = cls;
-
     }
 
     @Override

@@ -1,7 +1,12 @@
-package com.adnonstop.cameranew.gl;
+package com.adnonstop.cameranew.gl.graph;
 
 import android.opengl.GLES20;
+import android.opengl.Matrix;
+import android.util.Log;
 import android.view.View;
+
+import com.adnonstop.cameranew.contants.KeyConstant;
+import com.adnonstop.cameranew.gl.Shape;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -12,16 +17,16 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by Xiejq on 2017/11/24.
- * 绘制一个三角形的render
  */
 
-public class Triangle extends Shape {
+public class RegularTriangle extends Shape {
 
     private FloatBuffer vertexBuffer;//纹理buffer
     private final String vertexShaderCode =   //添加顶点着色脚本
             "attribute vec4 vPosition;" +
+                    "uniform mat4 vMatrix;"+
                     "void main() {" +
-                    "  gl_Position = vPosition;" +
+                    "  gl_Position = vMatrix*vPosition;" +
                     "}";
 
     private final String fragmentShaderCode =  //添加片元着色脚本
@@ -44,15 +49,22 @@ public class Triangle extends Shape {
     private int mColorHandler;
 
     private float[] mViewMatrix = new float[16];
+    private float[] mProjectMatrix = new float[16];
+    private float[] mMVPMatrix = new float[16];
+
+
+
 
     private final int vertexCount = triangleDoords.length / COORDS_PRE_VERTES;//顶点个数
     //顶点之间的偏移量
     private final int vertexStride = COORDS_PRE_VERTES * 4;//每个顶点4个字节
 
+    private int mMatrixHandler;
+
     //设置颜色
     float color[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-    public Triangle(View view) {
+    public RegularTriangle(View view) {
         super(view);
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(triangleDoords.length * 4);
         byteBuffer.order(ByteOrder.nativeOrder());
@@ -80,7 +92,15 @@ public class Triangle extends Shape {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-
+        //计算宽高比
+        float ratio = (width / height);
+        Log.i(KeyConstant.TAG, "onSurfaceChanged: " + ratio);
+        //设hi在透视投影
+        Matrix.frustumM(mProjectMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+        //设置相机位置
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 7.0f, 0f, 0f, 0f, 0f, 1.0f, 0f);
+        //计算变化矩阵
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
     }
 
     @Override
@@ -88,6 +108,10 @@ public class Triangle extends Shape {
 
         //将程序加入到OpenGles2.0环境
         GLES20.glUseProgram(mProgram);
+        //获取变换矩阵vMatrix成员句柄
+        mMatrixHandler = GLES20.glGetUniformLocation(mProgram, "vMatrix");
+        //指定vMatrix的值
+        GLES20.glUniformMatrix4fv(mMatrixHandler, 1, false, mMVPMatrix, 0);
 
         //获取顶点着色器的vPostion成员句柄
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
@@ -96,6 +120,8 @@ public class Triangle extends Shape {
         //准备三角形的坐标句柄
         GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PRE_VERTES, GLES20.GL_FLOAT, false,
                 vertexStride, vertexBuffer);
+        //获取片元着色器的vColor的成员的句柄
+        mColorHandler = GLES20.glGetUniformLocation(mProgram, "vColor");
         //设置绘制三角形的颜色
         GLES20.glUniform4fv(mColorHandler, 1, color, 0);
         //绘制三角形
@@ -103,4 +129,5 @@ public class Triangle extends Shape {
         //禁止顶点数组的句柄
         GLES20.glDisableVertexAttribArray(mPositionHandle);
     }
+
 }

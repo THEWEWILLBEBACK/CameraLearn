@@ -13,7 +13,8 @@ import android.widget.Toast;
 import com.adnonstop.cameranew.contants.KeyConstant;
 import com.adnonstop.cameranew.gl.FillterGLview;
 import com.adnonstop.cameranew.gl.Shape;
-import com.adnonstop.cameranew.gl.Triangle;
+import com.adnonstop.cameranew.gl.graph.RegularTriangle;
+import com.adnonstop.cameranew.gl.graph.Triangle;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,11 +51,10 @@ public class DrawViewActivity extends AppCompatActivity implements View.OnClickL
         mGLSurfaceDraw.onPause();//手动调用SurfaceView的opause方法，强制调用surfaceView重新
         switch (item.getItemId()) {
             case R.id.menu_one:
-                Toast.makeText(this, "三角形", Toast.LENGTH_SHORT).show();
                 drawChooseShape(Triangle.class);
                 break;
             case R.id.menu_two:
-
+                drawChooseShape(RegularTriangle.class);
                 break;
             case R.id.menu_three:
 
@@ -81,7 +81,7 @@ public class DrawViewActivity extends AppCompatActivity implements View.OnClickL
 
                 break;
         }
-
+        Toast.makeText(this, ""+item.getTitle(), Toast.LENGTH_SHORT).show();
         return super.onOptionsItemSelected(item);
     }
 
